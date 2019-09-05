@@ -14,7 +14,7 @@ def size_fmt(num, suffix='B'):
     return "%.1f %s%s" % (num, 'Yi', suffix)
 
 
-def tnt_data(title_filter):
+def tnt_data(human_readable, title_filter):
     regexp = None
     if title_filter:
         regexp = re.compile(title_filter)
@@ -24,34 +24,22 @@ def tnt_data(title_filter):
         for row in csv_reader:
             if regexp and not regexp.search(row['TITOLO']):
                 continue
-            yield int(row['DIMENSIONE']), row['HASH'], row['TITOLO']
 
+            if human_readable:
+                size = size_fmt(int(row['DIMENSIONE']))
+            else:
+                size = int(row['DIMENSIONE'])
 
-def do_sort(data, sort_by):
-    if sort_by.lower() == 'title':
-        def fun(x):
-            return x[2].lower()
-    else:
-        def fun(x):
-            return x[0]
-    return sorted(data, key=fun)
+            magnet_link = 'magnet:?xt=urn:btih:{}'.format(row['HASH'])
+            yield size, magnet_link, row['TITOLO'].strip()
 
 
 @click.command()
 @click.option('--human-readable', '-h', is_flag=True)
 @click.option('--title-filter', '-t', default=None)
-@click.option('--sort-by', '-s', type=click.Choice(['size', 'title']), default='title')
-def extract(human_readable, title_filter, sort_by):
+def extract(human_readable, title_filter):
 
-    data = []
-    for size, btih, title in tnt_data(title_filter):
-        magnet_link = 'magnet:?xt=urn:btih:{}'.format(btih)
-        data.append([size, magnet_link, title.strip()])
-
-    data = do_sort(data, sort_by)
-    if human_readable:
-        for row in data:
-            row[0] = size_fmt(row[0])
+    data = tnt_data(human_readable, title_filter)
 
     colalign = None
     if human_readable:
