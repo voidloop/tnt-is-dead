@@ -68,6 +68,9 @@ def format_link(hash_):
 @click.argument('pattern')
 @click.pass_context
 def search(ctx, db_file, ignore_case, human_readable, link_only, pattern):
+    """
+    Search releases in TNT Village's dump.
+    """
     if not os.path.exists(db_file):
         raise click.UsageError('{} does not exist, please use "import" command to create it.'.format(DB_FILE))
 
