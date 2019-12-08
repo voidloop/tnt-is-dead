@@ -145,7 +145,7 @@ def count_magnets(conn):
 @click.argument('dump_file', metavar='DUMP', type=click.Path(exists=True))
 def import_(db_file, force, dump_file):
     """
-    Import TNT Village dump file.'
+    Import TNT Village dump file.
     """
     if os.path.exists(db_file):
         if not force:
