@@ -8,8 +8,6 @@ import click
 import csv
 from pathlib import Path
 
-
-CSV_FILE = 'dump_release_tntvillage_2019-08-30.csv'
 DB_FILE = str(Path.home().joinpath('.tntisdead.db'))
 
 
