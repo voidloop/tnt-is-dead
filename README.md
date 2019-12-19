@@ -5,14 +5,14 @@ You can download the dump file from here: http://tntvillage.scambioetico.org.
 Once you downloaded the file, its content can be transferred to a sqlite database with these commands:
 
 ```
-pipenv shell
-python ./main.py import dump_release_tntvillage_2019-08-30.csv
+# pipenv shell
+# python ./main.py import dump_release_tntvillage_2019-08-30.csv
 ``` 
 
 You can use "search" command to search inside the releases using a search string in glob format:
 
 ```
-python ./main.py search 'Alien*'
+# python ./main.py search 'Alien*'
 ```
 
 I also provide "install.sh" to create a small launcher to tnt-is-dead. 
