@@ -6,13 +6,13 @@ Once you downloaded the file, its content can be transferred to a sqlite databas
 
 ```
 pipenv shell
-python ./main import dump_release_tntvillage_2019-08-30.csv
+python ./main.py import dump_release_tntvillage_2019-08-30.csv
 ``` 
 
 You can use "search" command to search inside the releases using a search string in glob format:
 
 ```
-python ./main search 'Alien*'
+python ./main.py search 'Alien*'
 ```
 
 I also provide "install.sh" to create a small launcher to tnt-is-dead. 
