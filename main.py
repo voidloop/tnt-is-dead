@@ -63,9 +63,10 @@ def format_link(hash_):
 @click.option('--ignore-case', '-i', help='Ignore case distinctions.', is_flag=True)
 @click.option('--human-readable', '-h', help='Show a human readable table.', is_flag=True)
 @click.option('--link-only', '-l', help='Print only the magnet links.', is_flag=True)
-@click.argument('pattern')
+@click.option('--glob', '-g', help='Use PATTERN as a glob pattern.', is_flag=True)
+@click.argument('keyword')
 @click.pass_context
-def search(ctx, db_file, ignore_case, human_readable, link_only, pattern):
+def search(ctx, db_file, ignore_case, human_readable, link_only, glob, keyword):
     """
     Search releases in TNT Village's dump.
     """
@@ -74,16 +75,25 @@ def search(ctx, db_file, ignore_case, human_readable, link_only, pattern):
 
     logging.debug('Building SQL query...')
     select_sql = """SELECT dimensione, hash, titolo, descrizione FROM magnets WHERE """
-    if ignore_case:
-        select_sql += """LOWER(descrizione) GLOB LOWER(?) OR LOWER(titolo) GLOB LOWER(?)"""
+
+    if glob:
+        operator = 'GLOB'
     else:
-        select_sql += """descrizione GLOB ? OR titolo GLOB ?"""
+        operator = 'LIKE'
+        keyword = "%" + keyword + "%"
+
+    if ignore_case:
+        select_sql += """LOWER(descrizione) {0} LOWER(?) OR LOWER(titolo) {0} LOWER(?)""".format(operator)
+    else:
+        select_sql += """descrizione {0} ? OR titolo {0} ?""".format(operator)
+
     select_sql += """ ORDER BY titolo;"""
+
     logging.debug(select_sql)
 
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
-    c.execute(select_sql, [pattern] * 2)
+    c.execute(select_sql, [keyword] * 2)
 
     logging.debug('Fetching data...')
     data = [(row[0], format_link(row[1]), *row[2:]) for row in c.fetchall()]
